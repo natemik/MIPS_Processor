@@ -5,9 +5,9 @@ use IEEE.STD_LOGIC_UNSIGNED.ALL;
 use IEEE.numeric_std.all;
 
 ENTITY Registers IS PORT (
-    ReadReg1 : IN std_logic_vector(4 downto 1);
-    ReadReg2 : IN std_logic_vector(4 downto 1);
-    WriteReg : IN std_logic_vector(4 downto 1);
+    ReadReg1 : IN std_logic_vector(4 downto 0);
+    ReadReg2 : IN std_logic_vector(4 downto 0);
+    WriteReg : IN std_logic_vector(4 downto 0);
     WriteData : IN std_logic_vector(31 downto 0);
     RegWrite : IN std_logic;
     

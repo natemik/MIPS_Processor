@@ -1,12 +1,14 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity MUX is PORT (
-    IN0 : IN std_logic_vector(31 downto 0);
-    IN1 : IN std_logic_vector(31 downto 0);
+entity MUX is 
+    Generic (inSize : integer);
+    PORT (
+    IN0 : IN std_logic_vector(inSize-1 downto 0);
+    IN1 : IN std_logic_vector(inSize-1 downto 0);
     MUX_Sel : IN std_logic;
     
-    MUX_Out : OUT std_logic_vector(31 downto 0));
+    MUX_Out : OUT std_logic_vector(inSize-1 downto 0));
 end MUX;
 
 architecture Behavioral of MUX is

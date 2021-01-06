@@ -22,12 +22,13 @@ end datapath;
 
 architecture Behavioral of datapath is
 
-COMPONENT MUX port (
-    IN0 : IN std_logic_vector(31 downto 0);
-    IN1 : IN std_logic_vector(31 downto 0);
+COMPONENT MUX generic (inSize : integer);
+port (
+    IN0 : IN std_logic_vector(inSize-1 downto 0);
+    IN1 : IN std_logic_vector(inSize-1 downto 0);
     MUX_Sel : IN std_logic;
     
-    MUX_Out : OUT std_logic_vector(31 downto 0));
+    MUX_Out : OUT std_logic_vector(inSize-1 downto 0));
 END COMPONENT;
 
 COMPONENT ALU port (
@@ -40,9 +41,9 @@ COMPONENT ALU port (
 END COMPONENT;
 
 COMPONENT REGISTERS port (
-    ReadReg1 : IN std_logic_vector(4 downto 1);
-    ReadReg2 : IN std_logic_vector(4 downto 1);
-    WriteReg : IN std_logic_vector(4 downto 1);
+    ReadReg1 : IN std_logic_vector(4 downto 0);
+    ReadReg2 : IN std_logic_vector(4 downto 0);
+    WriteReg : IN std_logic_vector(4 downto 0);
     WriteData : IN std_logic_vector(31 downto 0);
     RegWrite : IN std_logic;
     
@@ -51,7 +52,7 @@ COMPONENT REGISTERS port (
 END COMPONENT;
 
 COMPONENT DATA_MEMORY port (
-    Address : IN std_logic_vector(255 downto 0);
+    Address : IN std_logic_vector(31 downto 0);
     WriteData : IN std_logic_vector(31 downto 0);
     MemWrite : IN std_logic;
     MemRead : IN std_logic;
@@ -71,7 +72,7 @@ COMPONENT Instruction_Memory PORT (
     INSTR : OUT std_logic_vector(31 downto 0));
 END COMPONENT;
 
-SIGNAL PC_dp : std_logic_vector(31 downto 0);
+SIGNAL PC_dp : std_logic_vector(31 downto 0) := x"00000000";
 SIGNAL PC_PLUS4_dp : std_logic_vector(31 downto 0);
 SIGNAL PC_new_dp : std_logic_vector(31 downto 0);
 SIGNAL PCMux : std_logic_vector(31 downto 0);
@@ -84,7 +85,7 @@ SIGNAL Instr15To0_dp : std_logic_vector(15 downto 0) := INSTR_dp(15 downto 0);
 SIGNAL Instr15To0_SE_dp : std_logic_vector(31 downto 0);
 SIGNAL Instr15To0_SE_SL2_dp : std_logic_vector(31 downto 0);
 SIGNAL Instr25To0_dp : std_logic_vector(25 downto 0) := INSTR_dp(25 downto 0);
-SIGNAL RegMux_dp : std_logic_vector(31 downto 0);
+SIGNAL RegMux_dp : std_logic_vector(4 downto 0);
 SIGNAL RegToALU : std_logic_vector(31 downto 0);
 SIGNAL RegToALUMUX : std_logic_vector(31 downto 0);
 SIGNAL ALUMUXOutput_dp : std_logic_vector(31 downto 0);
@@ -109,13 +110,17 @@ begin
     BranchAddr_dp <= PC_PLUS4_dp + Instr15To0_SE_SL2_dp;
     BranchCond <= Branch_dp AND zero_dp;
     
-    PCMUX1 : MUX PORT MAP (
+    
+    
+    PCMUX1 : MUX Generic Map (inSize => 32)
+    PORT MAP (
         IN0 => PC_PLUS4_dp(31 downto 0),
         IN1 => BranchAddr_dp,
         Mux_Sel => BranchCond,
         Mux_Out => PCMux);
     
-    PCMUX2 : MUX PORT MAP (
+    PCMUX2 : MUX Generic Map (inSize => 32)
+    PORT MAP (
         IN0 => PCMux,
         IN1 => JumpAddr_dp,
         Mux_Sel => Jump_dp,
@@ -125,7 +130,8 @@ begin
         PC => PC_dp,
         INSTR => INSTR_dp);
     
-    REG_MUX : MUX PORT MAP (
+    REG_MUX : MUX Generic Map (inSize => 5)
+    PORT MAP (
         IN0 => Instr20To16_dp,
         IN1 => Instr15To11_dp,
         MUX_Sel => RegDst_dp,
@@ -144,7 +150,8 @@ begin
         Input => Instr15To0_dp,
         Output => Instr15To0_SE_dp);
                               
-    ALU_MUX : MUX PORT MAP (
+    ALU_MUX : MUX Generic Map (inSize => 32)
+    PORT MAP (
         IN0 => RegToALUMUX,
         IN1 => Instr15To0_SE_dp,
         MUX_Sel => ALUSrc_dp,
@@ -164,7 +171,8 @@ begin
         MemRead => MemRead_dp,
         ReadData => ReadDataMem_dp);
                                      
-    DMEM_MUX : MUX PORT MAP (
+    DMEM_MUX : MUX Generic Map (inSize => 32)
+    PORT MAP (
         IN0 => ReadDataMem_dp,
         IN1 => ALU_Result_dp,
         MUX_Sel => MemToReg_dp,

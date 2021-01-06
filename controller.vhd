@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_ARITH.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
 
 ENTITY controller IS PORT (
-    OPCODE : IN std_logic_vector(31 downto 26);
+    OPCODE_ctrl : IN std_logic_vector(31 downto 26);
     
     RegDst_ctrl :    OUT std_logic;
     Jump_ctrl :      OUT std_logic;
@@ -52,8 +52,8 @@ CONSTANT BEQ : std_logic_vector(5 downto 0) := "000100"; --Branch On Equal
 --CONSTANT BGEZ : std_logic_vector(5 downto 0) := "001010"; --Branch On GT or Equal to Zero
 
 BEGIN
-    CONTROLLER : PROCESS(OPCODE) BEGIN
-        CASE OPCODE IS                                      
+    CONTROLLER : PROCESS(OPCODE_ctrl) BEGIN
+        CASE OPCODE_ctrl IS                                      
             WHEN LW =>
                 RegDst_ctrl <= '0';
                 Jump_ctrl <= '0';
@@ -91,6 +91,16 @@ BEGIN
                 MemRead_ctrl <= '0';
                 MemtoReg_ctrl <= '0';
                 ALUOp_ctrl <= "01";
+                MemWrite_ctrl <= '0';
+                ALUSrc_ctrl <= '0';
+                RegWrite_ctrl <= '0';
+            WHEN others => 
+                RegDst_ctrl <= '0';
+                Jump_ctrl <= '0';
+                Branch_ctrl <= '0';
+                MemRead_ctrl <= '0';
+                MemtoReg_ctrl <= '0';
+                ALUOp_ctrl <= "00";
                 MemWrite_ctrl <= '0';
                 ALUSrc_ctrl <= '0';
                 RegWrite_ctrl <= '0';

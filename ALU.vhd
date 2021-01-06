@@ -42,6 +42,8 @@ BEGIN
                 END IF;
             WHEN NOR_ctrl =>
                 result <= INA NOR INB;
+            WHEN others =>
+                result <= x"00000000";
         END CASE;
         
         IF result = x"00000000" THEN

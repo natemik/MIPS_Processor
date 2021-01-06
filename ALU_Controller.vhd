@@ -7,7 +7,7 @@ ENTITY ALU_Controller IS PORT (
     ALUOp_aluctrl : IN std_logic_vector(1 downto 0);
     INSTR : IN std_logic_vector(5 downto 0);
     
-    ALUCtrl : OUT std_logic_vector(3 downto 0));
+    ALUCtrl_aluctrl : OUT std_logic_vector(3 downto 0));
 END ALU_Controller;
 
 architecture Behaviour of ALU_Controller is
@@ -32,16 +32,18 @@ CONSTANT SLT_FUNCT : std_logic_vector(5 downto 0) := "101010"; --Set Less Than
 BEGIN
     ALU_CONTROLLER : PROCESS(ALUOp_aluctrl) BEGIN
         CASE ALUOp_aluctrl IS                                      
-            WHEN SW_LW => ALUCtrl <= "0010";
-            WHEN BEQ => ALUCtrl <= "0110";
+            WHEN SW_LW => ALUCtrl_aluctrl <= "0010";
+            WHEN BEQ => ALUCtrl_aluctrl <= "0110";
             WHEN RTYPE => CASE INSTR IS
-                WHEN ADD_FUNCT => ALUCtrl <= "0010";
-                WHEN SUB_FUNCT => ALUCtrl <= "0110";
-                WHEN AND_FUNCT => ALUCtrl <= "0000";
-                WHEN OR_FUNCT => ALUCtrl <= "0001";
-                WHEN NOR_FUNCT => ALUCtrl <= "1100";
-                WHEN SLT_FUNCT => ALUCtrl <= "0111";
+                WHEN ADD_FUNCT => ALUCtrl_aluctrl <= "0010";
+                WHEN SUB_FUNCT => ALUCtrl_aluctrl <= "0110";
+                WHEN AND_FUNCT => ALUCtrl_aluctrl <= "0000";
+                WHEN OR_FUNCT => ALUCtrl_aluctrl <= "0001";
+                WHEN NOR_FUNCT => ALUCtrl_aluctrl <= "1100";
+                WHEN SLT_FUNCT => ALUCtrl_aluctrl <= "0111";
+                WHEN OTHERS => ALUCtrl_aluctrl <= "0000";
                 END CASE;
+            WHEN OTHERS => ALUCtrl_aluctrl <= "0000";
         END CASE;
     END PROCESS;
 end architecture;
